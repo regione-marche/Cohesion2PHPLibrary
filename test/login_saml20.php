@@ -5,6 +5,7 @@ require_once '../cohesion2/Cohesion2.php';
 try{
     $cohesion=new Cohesion2;
     $cohesion->useSAML20(true);
+    $cohesion->enableEIDASLogin(); //RIMUOVI per disabilitare il login eIDAS
     $cohesion->auth();
 }
 catch(Exception $e){
