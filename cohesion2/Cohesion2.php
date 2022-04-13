@@ -16,6 +16,7 @@ class Cohesion2{
     const COHESION2_SAML20_WEB = 'https://cohesion2.regione.marche.it/SPManager/webCheckSessionSSO.aspx';
     const SESSION_NAME = 'cohesion2';
     const EIDAS_FLAG = 'eidas=1';
+    const PURPOSE_FLAG = 'purpose=';
 
     
     private $authRestriction = '0,1,2,3';
@@ -24,6 +25,7 @@ class Cohesion2{
     private $sso = true;
     private $saml20 = false;
     private $eIDAS = false;
+    private $SPIDProPurpose = false;
 
     
     /**
@@ -140,13 +142,27 @@ class Cohesion2{
     }
 
     /**
-     * Abilita il login eIDAS (e automaticamente la modalità SAML2.0.
+     * Abilita il login eIDAS (e automaticamente la modalità SAML2.0).
      * @return Cohesion2
      */
     public function enableEIDASLogin(){
 
         $this->useSAML20(true);
         $this->eIDAS = true;
+
+        return $this;
+    }
+
+    /**
+     * Abilita il login con SPID Professionale (PF,PG,LP) e automaticamente la modalità SAML2.0).
+     * @param string[] $SPIDProPurposes inserire un array con i purpose richiesti. Default: PF - SPID per Persone Fisiche ad Uso Professionale.
+     * I possibili valori sono: LP, PG, PF, PX Così come indicato nell'avviso SPID 18 v2: https://www.agid.gov.it/sites/default/files/repository_files/spid-avviso-n18_v.2-_autenticazione_persona_giuridica_o_uso_professionale_per_la_persona_giuridica.pdf
+     * @return Cohesion2
+     */
+    public function enableSPIDProLogin($SPIDProPurposes = array("PF")){
+
+        $this->useSAML20(true);
+        $this->SPIDProPurpose = join("|",$SPIDProPurposes);
 
         return $this;
     }
@@ -220,7 +236,7 @@ class Cohesion2{
                 <esito_auth_sso />
                 <id_sessione_sso />
                 <id_sessione_aspnet_sso />
-                <stilesheet>AuthRestriction='.$this->authRestriction.($this->eIDAS? ";".self::EIDAS_FLAG : "").'</stilesheet>
+                <stilesheet>AuthRestriction='.$this->authRestriction.($this->eIDAS? ";".self::EIDAS_FLAG : "").($this->SPIDProPurpose? ";".self::PURPOSE_FLAG.$this->SPIDProPurpose: "").'</stilesheet>
                 <AuthRestriction xmlns="">'.$this->authRestriction.'</AuthRestriction>
             </auth>
         </dsAuth>';
@@ -264,7 +280,7 @@ class Cohesion2{
             $context);
         $domXML = new DOMDocument;
         $domXML->loadXML($result);
-        //file_put_contents('log.txt',var_export($result,1)."\n",FILE_APPEND);
+        file_put_contents('log.txt',var_export($result,1)."\n",FILE_APPEND);
 
         $profilo = simplexml_import_dom($domXML);
         $base = current($profilo->xpath('//base'));

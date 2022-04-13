@@ -47,8 +47,10 @@ E' possibile indicare a Cohesion di utilizzare lo standard SAML 2.0 tramite l'ap
       $cohesion = new Cohesion2;
       $cohesion->useSAML20(true);
       $cohesion->enableEIDASLogin(); //Inserire solo se si intende abilitare il login eIDAS
+      $cohesion->enableSPIDProLogin(array("PF", "PG", "LP")); //RIMUOVI per disabilitare il login SPID Professionale
       $cohesion->auth();
 ```
+
 
 ## Spiegazione del meccanismo di autenticazione
 Invocando il metodo auth() della classe Cohesion2 viene avviato il processo di autenticazione tramite SSO. Il processo si svolge in 4 passi:

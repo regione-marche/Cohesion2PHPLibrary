@@ -6,6 +6,7 @@ try{
     $cohesion=new Cohesion2;
     $cohesion->useSAML20(true);
     $cohesion->enableEIDASLogin(); //RIMUOVI per disabilitare il login eIDAS
+    $cohesion->enableSPIDProLogin(array("PF", "PG", "LP")); //RIMUOVI per disabilitare il login SPID Professionale
     $cohesion->auth();
 }
 catch(Exception $e){
