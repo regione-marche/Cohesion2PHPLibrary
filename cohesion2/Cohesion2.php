@@ -280,7 +280,7 @@ class Cohesion2{
             $context);
         $domXML = new DOMDocument;
         $domXML->loadXML($result);
-        file_put_contents('log.txt',var_export($result,1)."\n",FILE_APPEND);
+        //file_put_contents('log.txt',var_export($result,1)."\n",FILE_APPEND);
 
         $profilo = simplexml_import_dom($domXML);
         $base = current($profilo->xpath('//base'));
